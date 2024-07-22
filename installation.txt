@@ -1,0 +1,5 @@
+pip install tensorflow==2.12
+pip install tensorflow-probability
+pip install tf-agents
+conda install -c conda-forge jupyter
+conda install -c conda-forge pygame
