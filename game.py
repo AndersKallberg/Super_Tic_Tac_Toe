@@ -1,5 +1,6 @@
 import json
 from super_grid import SuperGrid
+import numpy as np
 
 class Game:
     """Manages the game logic and flow for Super Tic Tac Toe."""
@@ -128,3 +129,48 @@ class Game:
         self.current_player = 'X'
         self.next_grid = None  # This will hold the index of the next mini-grid
         self.highlight_super_grid = False
+
+    def get_cell_features(self):
+        """Return the cell features as a numpy array."""
+        cell_features = np.zeros((9, 9, 2), dtype=int)
+        for gr in range(3):
+            for gc in range(3):
+                for cr in range(3):
+                    for cc in range(3):
+                        cell = self.super_grid.mini_grids[gr][gc].cells[cr][cc]
+                        cell_features[gr * 3 + cr, gc * 3 + cc, 0] = 1 if cell.value == 'X' else 0
+                        cell_features[gr * 3 + cr, gc * 3 + cc, 1] = 1 if cell.value == 'O' else 0
+        return cell_features
+
+    def get_minigrid_features(self):
+        """Return the mini-grid features as a numpy array."""
+        minigrid_features = np.zeros((3, 3, 2), dtype=int)
+        for gr in range(3):
+            for gc in range(3):
+                mini_grid = self.super_grid.mini_grids[gr][gc]
+                minigrid_features[gr, gc, 0] = 1 if mini_grid.winner == 'X' else 0
+                minigrid_features[gr, gc, 1] = 1 if mini_grid.winner == 'O' else 0
+        return minigrid_features
+
+    def get_game_state_features(self):
+        """Return the game state features as a numpy array."""
+        game_state_features = np.zeros(3, dtype=int)
+        game_state_features[0] = 1 if self.current_player == 'X' else 0
+        game_state_features[1] = 1 if self.current_player == 'O' else 0
+        game_state_features[2] = 0 if self.next_grid is None else self.next_grid[0] * 3 + self.next_grid[1] + 1
+        return game_state_features
+    
+    def get_board_state(self):
+        """Return the board state as a concatenated numpy array."""
+        cell_features = self.get_cell_features()
+        minigrid_features = self.get_minigrid_features()
+        game_state_features = self.get_game_state_features()
+        
+        # Flatten the features and concatenate them
+        state = np.concatenate([
+            cell_features.flatten(),
+            minigrid_features.flatten(),
+            game_state_features
+        ])
+        
+        return state

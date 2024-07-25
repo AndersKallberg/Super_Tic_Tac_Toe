@@ -3,3 +3,5 @@ pip install tensorflow-probability
 pip install tf-agents
 conda install -c conda-forge jupyter
 conda install -c conda-forge pygame
+conda install conda-forge::numpy
+conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia

@@ -14,6 +14,9 @@ class MiniGrid:
         """Check if the mini-grid is full."""
         return all(cell.value is not None for row in self.cells for cell in row)
 
+    def get_winner(self):
+        return self.winner
+
     def check_winner(self):
         """Check if there is a winner in the mini-grid."""
         for i in range(3):
